@@ -1,2 +1,3 @@
-# MobileAppDevelopmentCourse
-Homeworks and Exercises for the Mobile App Development Course
+# homework_4_flutter
+
+A new Flutter project.
