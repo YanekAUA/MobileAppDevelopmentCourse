@@ -19,7 +19,12 @@ To save results in memory (Database, File, Preferences), the user will not need 
 
 import 'package:flutter/material.dart';
 
-void main() {
+import 'src/views/home_page.dart';
+
+void main() async {
+  // Ensure Flutter bindings are initialized before using plugins
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MainApp());
 }
 
@@ -28,8 +33,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return MaterialApp(
+      title: 'Homework Grade Calculator',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const HomePage(),
     );
   }
 }
