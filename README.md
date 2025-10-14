@@ -1,2 +1,3 @@
-# MobileAppDevelopmentCourse
-Homeworks and Exercises for the Mobile App Development Course
+# midterm_1
+
+A new Flutter project.
