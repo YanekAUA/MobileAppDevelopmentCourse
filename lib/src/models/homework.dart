@@ -28,4 +28,20 @@ class Homework {
       completed: completed ?? this.completed,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'subject': subject,
+    'title': title,
+    'dueDate': dueDate.toIso8601String(),
+    'completed': completed,
+  };
+
+  static Homework fromJson(Map<String, dynamic> json) => Homework(
+    id: json['id'] as String,
+    subject: json['subject'] as String,
+    title: json['title'] as String,
+    dueDate: DateTime.parse(json['dueDate'] as String),
+    completed: json['completed'] as bool,
+  );
 }

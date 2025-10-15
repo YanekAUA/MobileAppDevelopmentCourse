@@ -34,6 +34,7 @@ class AppRouteInformationParser extends RouteInformationParser<AppRoutePath> {
 
 class AppRouterDelegate extends RouterDelegate<AppRoutePath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<AppRoutePath> {
+  @override
   final GlobalKey<NavigatorState> navigatorKey;
 
   AppPage _page = AppPage.list;

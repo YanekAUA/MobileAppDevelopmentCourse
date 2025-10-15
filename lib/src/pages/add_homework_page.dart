@@ -30,7 +30,7 @@ class _AddHomeworkPageState extends State<AddHomeworkPage> {
     final picked = await showDatePicker(
       context: context,
       initialDate: now,
-      firstDate: now.subtract(const Duration(days: 365)),
+      firstDate: now,
       lastDate: now.add(const Duration(days: 365 * 5)),
     );
     if (picked != null) setState(() => _dueDate = picked);
