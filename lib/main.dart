@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'src/providers/counter_provider.dart';
-import 'src/blocs/counter_bloc.dart';
+import 'src/blocs/homework_bloc.dart';
 import 'src/router/app_router.dart';
 
 void main() {
@@ -29,18 +27,12 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CounterProvider()),
-        // BlocProvider is below inside BlocProvider to allow access in subtree
-      ],
-      child: BlocProvider(
-        create: (_) => CounterBloc(),
-        child: MaterialApp.router(
-          title: 'Navigation2 Counter App',
-          routerDelegate: _routerDelegate,
-          routeInformationParser: _routeParser,
-        ),
+    return BlocProvider(
+      create: (_) => HomeworkBloc(),
+      child: MaterialApp.router(
+        title: 'Homework Tracker',
+        routerDelegate: _routerDelegate,
+        routeInformationParser: _routeParser,
       ),
     );
   }

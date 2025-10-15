@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../pages/provider_counter_page.dart';
-import '../pages/bloc_counter_page.dart';
+import '../pages/homework_list_page.dart';
+import '../pages/add_homework_page.dart';
 
-enum AppTab { provider, bloc }
+enum AppPage { list, add }
 
 class AppRoutePath {
-  final AppTab tab;
-  AppRoutePath(this.tab);
+  final AppPage page;
+  AppRoutePath(this.page);
 }
 
 class AppRouteInformationParser extends RouteInformationParser<AppRoutePath> {
@@ -15,19 +15,19 @@ class AppRouteInformationParser extends RouteInformationParser<AppRoutePath> {
     RouteInformation routeInformation,
   ) async {
     final uri = Uri.parse(routeInformation.location);
-    if (uri.pathSegments.isEmpty) return AppRoutePath(AppTab.provider);
+    if (uri.pathSegments.isEmpty) return AppRoutePath(AppPage.list);
     final first = uri.pathSegments.first;
-    if (first == 'bloc') return AppRoutePath(AppTab.bloc);
-    return AppRoutePath(AppTab.provider);
+    if (first == 'add') return AppRoutePath(AppPage.add);
+    return AppRoutePath(AppPage.list);
   }
 
   @override
   RouteInformation? restoreRouteInformation(AppRoutePath configuration) {
-    switch (configuration.tab) {
-      case AppTab.provider:
+    switch (configuration.page) {
+      case AppPage.list:
         return const RouteInformation(location: '/');
-      case AppTab.bloc:
-        return const RouteInformation(location: '/bloc');
+      case AppPage.add:
+        return const RouteInformation(location: '/add');
     }
   }
 }
@@ -36,75 +36,58 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<AppRoutePath> {
   final GlobalKey<NavigatorState> navigatorKey;
 
-  AppTab _currentTab = AppTab.provider;
+  AppPage _page = AppPage.list;
 
   AppRouterDelegate() : navigatorKey = GlobalKey<NavigatorState>();
 
-  AppTab get currentTab => _currentTab;
+  void goToList() {
+    _page = AppPage.list;
+    notifyListeners();
+  }
 
-  void setTab(AppTab tab) {
-    if (_currentTab != tab) {
-      _currentTab = tab;
-      notifyListeners();
-    }
+  void goToAdd() {
+    _page = AppPage.add;
+    notifyListeners();
   }
 
   @override
-  AppRoutePath get currentConfiguration => AppRoutePath(_currentTab);
+  AppRoutePath get currentConfiguration => AppRoutePath(_page);
 
   @override
   Widget build(BuildContext context) {
+    final pages = <Page>[];
+    pages.add(
+      MaterialPage(
+        key: const ValueKey('HomeworkList'),
+        child: HomeworkListPage(onAdd: goToAdd),
+      ),
+    );
+    if (_page == AppPage.add) {
+      pages.add(
+        MaterialPage(
+          key: const ValueKey('AddHomework'),
+          child: AddHomeworkPage(onSaved: goToList),
+        ),
+      );
+    }
+
     return Navigator(
       key: navigatorKey,
-      pages: [
-        MaterialPage(
-          key: const ValueKey('TabShell'),
-          child: TabShell(currentTab: _currentTab, onTabSelected: setTab),
-        ),
-      ],
-      onPopPage: (route, result) => route.didPop(result),
+      pages: pages,
+      onPopPage: (route, result) {
+        if (!route.didPop(result)) return false;
+        // On pop from Add page, go back to list
+        if (_page == AppPage.add) {
+          _page = AppPage.list;
+          notifyListeners();
+        }
+        return true;
+      },
     );
   }
 
   @override
   Future<void> setNewRoutePath(AppRoutePath configuration) async {
-    _currentTab = configuration.tab;
-  }
-}
-
-class TabShell extends StatelessWidget {
-  final AppTab currentTab;
-  final ValueChanged<AppTab> onTabSelected;
-
-  const TabShell({
-    super.key,
-    required this.currentTab,
-    required this.onTabSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    Widget body;
-    switch (currentTab) {
-      case AppTab.provider:
-        body = const ProviderCounterPage();
-        break;
-      case AppTab.bloc:
-        body = const BlocCounterPage();
-        break;
-    }
-
-    return Scaffold(
-      body: body,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentTab == AppTab.provider ? 0 : 1,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Provider'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Bloc'),
-        ],
-        onTap: (index) =>
-            onTabSelected(index == 0 ? AppTab.provider : AppTab.bloc),
-      ),
-    );
+    _page = configuration.page;
   }
 }
