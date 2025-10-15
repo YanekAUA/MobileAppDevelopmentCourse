@@ -13,3 +13,8 @@ class ToggleHomeworkCompleted extends HomeworkEvent {
   final String id;
   ToggleHomeworkCompleted(this.id);
 }
+
+class RemoveHomework extends HomeworkEvent {
+  final String id;
+  RemoveHomework(this.id);
+}

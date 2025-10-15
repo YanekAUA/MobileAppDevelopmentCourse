@@ -14,7 +14,7 @@ class AppRouteInformationParser extends RouteInformationParser<AppRoutePath> {
   Future<AppRoutePath> parseRouteInformation(
     RouteInformation routeInformation,
   ) async {
-    final uri = Uri.parse(routeInformation.location);
+    final uri = routeInformation.uri;
     if (uri.pathSegments.isEmpty) return AppRoutePath(AppPage.list);
     final first = uri.pathSegments.first;
     if (first == 'add') return AppRoutePath(AppPage.add);
@@ -25,9 +25,9 @@ class AppRouteInformationParser extends RouteInformationParser<AppRoutePath> {
   RouteInformation? restoreRouteInformation(AppRoutePath configuration) {
     switch (configuration.page) {
       case AppPage.list:
-        return const RouteInformation(location: '/');
+        return RouteInformation(uri: Uri.parse('/'));
       case AppPage.add:
-        return const RouteInformation(location: '/add');
+        return RouteInformation(uri: Uri.parse('/add'));
     }
   }
 }

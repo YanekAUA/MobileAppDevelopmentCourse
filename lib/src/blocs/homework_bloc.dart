@@ -11,6 +11,7 @@ class HomeworkBloc extends Bloc<HomeworkEvent, HomeworkState> {
   HomeworkBloc() : super(const HomeworkState()) {
     on<LoadHomeworks>(_onLoadHomeworks);
     on<AddHomework>(_onAddHomework);
+    on<RemoveHomework>(_onRemoveHomework);
     on<ToggleHomeworkCompleted>(_onToggleCompleted);
 
     // trigger loading from persistence
@@ -65,5 +66,12 @@ class HomeworkBloc extends Bloc<HomeworkEvent, HomeworkState> {
     final prefs = await SharedPreferences.getInstance();
     final list = items.map((e) => e.toJson()).toList();
     await prefs.setString('homework_items', json.encode(list));
+  }
+
+  void _onRemoveHomework(RemoveHomework event, Emitter<HomeworkState> emit) {
+    final updated = state.items.where((hw) => hw.id != event.id).toList();
+    final newState = state.copyWith(items: updated);
+    emit(newState);
+    _saveItems(newState.items);
   }
 }

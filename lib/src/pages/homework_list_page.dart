@@ -18,7 +18,7 @@ class HomeworkListPage extends StatelessWidget {
           if (items.isEmpty) {
             return const Center(child: Text('No homework tasks yet'));
           }
-
+          // TODO: Add Remove button
           return ListView.separated(
             padding: const EdgeInsets.all(8),
             itemCount: items.length,
