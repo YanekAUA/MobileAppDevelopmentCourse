@@ -25,7 +25,6 @@ class HomeListWidgetState extends State<HomeListWidget> {
     });
 
     _scrollController.addListener(() {
-      print('ENTERED INTO SCROLL CONTROLLER');
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent) {
         // Reached the bottom of the list
@@ -51,11 +50,8 @@ class HomeListWidgetState extends State<HomeListWidget> {
             itemCount: state.items.length,
             itemBuilder: (context, index) {
               // Wrap ListTile in a Card so it has a Material ancestor
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Card(
-                  child: ListTile(title: Text(state.items[index].title ?? "")),
-                ),
+              return Card(
+                child: ListTile(title: Text(state.items[index].title ?? "")),
               );
             },
           );
