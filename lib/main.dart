@@ -19,7 +19,7 @@ To save results in memory (Database, File, Preferences), the user will not need 
 
 import 'package:flutter/material.dart';
 
-import 'src/views/home_page.dart';
+import 'home/home_page.dart';
 
 void main() async {
   // Ensure Flutter bindings are initialized before using plugins

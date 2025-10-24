@@ -2,20 +2,12 @@ abstract class GradeEvent {}
 
 class LoadGradesEvent extends GradeEvent {}
 
-class SaveGradesEvent extends GradeEvent {
-  final Map<String, double> grades;
-
-  SaveGradesEvent(this.grades);
-}
-
 class ClearGradesEvent extends GradeEvent {}
 
-class CalculateFinalGradeEvent extends GradeEvent {}
-
-class UpdatePresentationEvent extends GradeEvent {
+class UpdateParticipationEvent extends GradeEvent {
   final double value;
 
-  UpdatePresentationEvent(this.value);
+  UpdateParticipationEvent(this.value);
 }
 
 class UpdateHomeworkEvent extends GradeEvent {
@@ -24,6 +16,16 @@ class UpdateHomeworkEvent extends GradeEvent {
 
   UpdateHomeworkEvent(this.index, this.value);
 }
+
+class AddHomeworkEvent extends GradeEvent {}
+
+class RemoveHomeworkEvent extends GradeEvent {
+  final int index;
+
+  RemoveHomeworkEvent(this.index);
+}
+
+class ResetHomeworksEvent extends GradeEvent {}
 
 class UpdateGroupPresentationEvent extends GradeEvent {
   final double value;

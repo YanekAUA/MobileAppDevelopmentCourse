@@ -12,54 +12,85 @@ class GradeBloc extends Bloc<GradeEvent, GradeState> {
 
   GradeBloc(this._gradeList, this.repository) : super(InitialGradeState()) {
     on<LoadGradesEvent>((event, emit) async {
-      print("LoadGradesEvent received");
       _gradeList = await repository.load();
-      emit(LoadedGradeState(GradeListMapper.toMap(_gradeList)));
-    });
-
-    on<SaveGradesEvent>((event, emit) {
-      print("SaveGradesEvent received with grades: ${event.grades}");
-      _gradeList = GradeListMapper.fromMap(event.grades);
-      repository.save(_gradeList);
-      emit(SavedGradeState());
+      emit(_createLoadedState());
     });
 
     on<ClearGradesEvent>((event, emit) {
-      print("ClearGradesEvent received");
       repository.clear();
       _gradeList = GradeList(); // Reset the _gradeList to default values
-      emit(InitialGradeState());
+      repository.save(_gradeList);
+      emit(_createLoadedState());
     });
 
-    on<CalculateFinalGradeEvent>((event, emit) {
-      print("CalculateFinalGradeEvent received");
-      _gradeList.calculateFinalGrade();
-    });
-
-    on<UpdatePresentationEvent>((event, emit) {
-      print("UpdatePresentationEvent received with value: ${event.value}");
-    });
-
-    on<UpdateHomeworkEvent>((event, emit) {
-      print(
-        "UpdateHomeworkEvent received for index: ${event.index} with value: ${event.value}",
-      );
+    on<UpdateParticipationEvent>((event, emit) {
+      _gradeList.participation = event.value;
+      repository.save(_gradeList);
+      emit(_createLoadedState());
     });
 
     on<UpdateGroupPresentationEvent>((event, emit) {
-      print("UpdateGroupPresentationEvent received with value: ${event.value}");
+      _gradeList.groupPresentation = event.value;
+      repository.save(_gradeList);
+      emit(_createLoadedState());
     });
 
     on<UpdateMidterm1Event>((event, emit) {
-      print("UpdateMidterm1Event received with value: ${event.value}");
+      _gradeList.midterm1 = event.value;
+      repository.save(_gradeList);
+      emit(_createLoadedState());
     });
 
     on<UpdateMidterm2Event>((event, emit) {
-      print("UpdateMidterm2Event received with value: ${event.value}");
+      _gradeList.midterm2 = event.value;
+      repository.save(_gradeList);
+      emit(_createLoadedState());
     });
 
     on<UpdateFinalProjectEvent>((event, emit) {
-      print("UpdateFinalProjectEvent received with value: ${event.value}");
+      _gradeList.finalProject = event.value;
+      repository.save(_gradeList);
+      emit(_createLoadedState());
     });
+
+    on<UpdateHomeworkEvent>((event, emit) {
+      if (event.index < _gradeList.homeworks.length) {
+        _gradeList.homeworks[event.index] = event.value;
+        repository.save(_gradeList);
+        emit(_createLoadedState());
+      }
+    });
+
+    on<AddHomeworkEvent>((event, emit) {
+      if (_gradeList.homeworks.length < 10) {
+        _gradeList.homeworks.add(100.0);
+        repository.save(_gradeList);
+        emit(_createLoadedState());
+      }
+    });
+
+    on<RemoveHomeworkEvent>((event, emit) {
+      if (_gradeList.homeworks.length > 1 &&
+          event.index < _gradeList.homeworks.length) {
+        _gradeList.homeworks.removeAt(event.index);
+        repository.save(_gradeList);
+        emit(_createLoadedState());
+      }
+    });
+
+    on<ResetHomeworksEvent>((event, emit) {
+      _gradeList.homeworks = List.generate(4, (_) => 100.0);
+      repository.save(_gradeList);
+      emit(_createLoadedState());
+    });
+  }
+
+  LoadedGradeState _createLoadedState() {
+    final finalGrade = _gradeList.calculateFinalGrade();
+    return LoadedGradeState(
+      GradeListMapper.toMap(_gradeList),
+      List.from(_gradeList.homeworks), // Pass a copy
+      finalGrade,
+    );
   }
 }

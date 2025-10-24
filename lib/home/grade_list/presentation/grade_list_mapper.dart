@@ -4,17 +4,15 @@ class GradeListMapper {
   /// Converts a `GradeList` to a `Map<String, double>` for easier UI consumption.
   static Map<String, double> toMap(GradeList gradeList) {
     final Map<String, double> gradeMap = {};
-    gradeMap['participation'] = gradeList.participation ?? 100.0;
-    gradeMap['homeworks'] =
-        gradeList.homeworks != null && gradeList.homeworks!.isNotEmpty
-        ? gradeList.homeworks!.reduce((a, b) => a + b) /
-              gradeList.homeworks!.length
+    gradeMap['participation'] = gradeList.participation;
+    gradeMap['homeworks'] = gradeList.homeworks.isNotEmpty
+        ? gradeList.homeworks.reduce((a, b) => a + b) /
+              gradeList.homeworks.length
         : 100.0;
-    gradeMap['groupPresentation'] = gradeList.groupPresentation ?? 100.0;
-    gradeMap['midterm1'] = gradeList.midterm1 ?? 100.0;
-    gradeMap['midterm2'] = gradeList.midterm2 ?? 100.0;
-    gradeMap['finalProject'] = gradeList.finalProject ?? 100.0;
-    gradeMap['finalGrade'] = gradeList.finalGrade ?? 100.0;
+    gradeMap['groupPresentation'] = gradeList.groupPresentation;
+    gradeMap['midterm1'] = gradeList.midterm1;
+    gradeMap['midterm2'] = gradeList.midterm2;
+    gradeMap['finalProject'] = gradeList.finalProject;
     return gradeMap;
   }
 

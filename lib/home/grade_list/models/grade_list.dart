@@ -16,34 +16,34 @@ It is beneficial,
 To save results in memory (Database, File, Preferences), the user will not need to input values after killing and reopening the application. (shared_preferences*/
 
 class GradeList {
-  double? participation;
-  List<double>? homeworks;
-  double? groupPresentation;
-  double? midterm1;
-  double? midterm2;
-  double? finalProject;
+  double participation;
+  List<double> homeworks;
+  double groupPresentation;
+  double midterm1;
+  double midterm2;
+  double finalProject;
   double? finalGrade;
 
   GradeList({
-    this.participation,
-    this.homeworks,
-    this.groupPresentation,
-    this.midterm1,
-    this.midterm2,
-    this.finalProject,
+    this.participation = 100.0,
+    List<double>? homeworks,
+    this.groupPresentation = 100.0,
+    this.midterm1 = 100.0,
+    this.midterm2 = 100.0,
+    this.finalProject = 100.0,
     this.finalGrade,
-  });
+  }) : homeworks = homeworks ?? List.generate(4, (_) => 100.0);
 
   /// Calculates the final grade based on the current grades.
   double calculateFinalGrade() {
-    final double participationScore = participation ?? 0.0;
-    final double homeworkScore = (homeworks != null && homeworks!.isNotEmpty)
-        ? homeworks!.reduce((a, b) => a + b) / homeworks!.length
+    final double participationScore = participation;
+    final double homeworkScore = (homeworks.isNotEmpty)
+        ? homeworks.reduce((a, b) => a + b) / homeworks.length
         : 0.0;
-    final double groupPresentationScore = groupPresentation ?? 0.0;
-    final double midterm1Score = midterm1 ?? 0.0;
-    final double midterm2Score = midterm2 ?? 0.0;
-    final double finalProjectScore = finalProject ?? 0.0;
+    final double groupPresentationScore = groupPresentation;
+    final double midterm1Score = midterm1;
+    final double midterm2Score = midterm2;
+    final double finalProjectScore = finalProject;
 
     finalGrade =
         (participationScore * 0.10) +
@@ -70,14 +70,17 @@ class GradeList {
 
   factory GradeList.fromJson(Map<String, dynamic> json) {
     return GradeList(
-      participation: (json['participation'] as num?)?.toDouble(),
-      homeworks: (json['homeworks'] as List<dynamic>?)
-          ?.map((e) => (e as num).toDouble())
-          .toList(),
-      groupPresentation: (json['groupPresentation'] as num?)?.toDouble(),
-      midterm1: (json['midterm1'] as num?)?.toDouble(),
-      midterm2: (json['midterm2'] as num?)?.toDouble(),
-      finalProject: (json['finalProject'] as num?)?.toDouble(),
+      participation: (json['participation'] as num?)?.toDouble() ?? 100.0,
+      homeworks:
+          (json['homeworks'] as List<dynamic>?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          List.generate(4, (_) => 100.0),
+      groupPresentation:
+          (json['groupPresentation'] as num?)?.toDouble() ?? 100.0,
+      midterm1: (json['midterm1'] as num?)?.toDouble() ?? 100.0,
+      midterm2: (json['midterm2'] as num?)?.toDouble() ?? 100.0,
+      finalProject: (json['finalProject'] as num?)?.toDouble() ?? 100.0,
       finalGrade: (json['finalGrade'] as num?)?.toDouble(),
     );
   }
