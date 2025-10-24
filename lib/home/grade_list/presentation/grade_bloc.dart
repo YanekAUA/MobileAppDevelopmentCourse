@@ -24,38 +24,44 @@ class GradeBloc extends Bloc<GradeEvent, GradeState> {
     });
 
     on<UpdateParticipationEvent>((event, emit) {
-      _gradeList.participation = event.value;
+      final value = (event.value.clamp(0.0, 100.0)).toDouble();
+      _gradeList.participation = value;
       repository.save(_gradeList);
       emit(_createLoadedState());
     });
 
     on<UpdateGroupPresentationEvent>((event, emit) {
-      _gradeList.groupPresentation = event.value;
+      final value = (event.value.clamp(0.0, 100.0)).toDouble();
+      _gradeList.groupPresentation = value;
       repository.save(_gradeList);
       emit(_createLoadedState());
     });
 
     on<UpdateMidterm1Event>((event, emit) {
-      _gradeList.midterm1 = event.value;
+      final value = (event.value.clamp(0.0, 100.0)).toDouble();
+      _gradeList.midterm1 = value;
       repository.save(_gradeList);
       emit(_createLoadedState());
     });
 
     on<UpdateMidterm2Event>((event, emit) {
-      _gradeList.midterm2 = event.value;
+      final value = (event.value.clamp(0.0, 100.0)).toDouble();
+      _gradeList.midterm2 = value;
       repository.save(_gradeList);
       emit(_createLoadedState());
     });
 
     on<UpdateFinalProjectEvent>((event, emit) {
-      _gradeList.finalProject = event.value;
+      final value = (event.value.clamp(0.0, 100.0)).toDouble();
+      _gradeList.finalProject = value;
       repository.save(_gradeList);
       emit(_createLoadedState());
     });
 
     on<UpdateHomeworkEvent>((event, emit) {
       if (event.index < _gradeList.homeworks.length) {
-        _gradeList.homeworks[event.index] = event.value;
+        final value = (event.value.clamp(0.0, 100.0)).toDouble();
+        _gradeList.homeworks[event.index] = value;
         repository.save(_gradeList);
         emit(_createLoadedState());
       }

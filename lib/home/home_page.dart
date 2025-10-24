@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homework_4_flutter/home/grade_list/data/grade_repository.dart';
-import 'package:homework_4_flutter/home/grade_list/models/grade_list.dart';
 import 'package:homework_4_flutter/home/grade_list/presentation/grade_bloc.dart';
 import 'package:homework_4_flutter/home/grade_list/presentation/grade_event.dart';
 import 'package:homework_4_flutter/home/grade_list/presentation/grade_state.dart';
@@ -217,14 +216,7 @@ class _HomePageState extends State<HomePage> {
                 FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}$')),
               ],
               onChanged: (text) {
-                var value = double.tryParse(text) ?? 0.0;
-                if (value > 100) {
-                  value = 100;
-                  controller.text = '100';
-                  controller.selection = TextSelection.fromPosition(
-                    TextPosition(offset: controller.text.length),
-                  );
-                }
+                final value = double.tryParse(text) ?? 0.0;
                 onChanged(value);
               },
               decoration: InputDecoration(
