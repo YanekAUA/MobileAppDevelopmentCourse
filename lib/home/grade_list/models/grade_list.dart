@@ -69,7 +69,7 @@ class GradeList {
   }
 
   factory GradeList.fromJson(Map<String, dynamic> json) {
-    return GradeList(
+    final gradeList = GradeList(
       participation: (json['participation'] as num?)?.toDouble() ?? 100.0,
       homeworks:
           (json['homeworks'] as List<dynamic>?)
@@ -81,7 +81,8 @@ class GradeList {
       midterm1: (json['midterm1'] as num?)?.toDouble() ?? 100.0,
       midterm2: (json['midterm2'] as num?)?.toDouble() ?? 100.0,
       finalProject: (json['finalProject'] as num?)?.toDouble() ?? 100.0,
-      finalGrade: (json['finalGrade'] as num?)?.toDouble(),
     );
+    gradeList.calculateFinalGrade();
+    return gradeList;
   }
 }

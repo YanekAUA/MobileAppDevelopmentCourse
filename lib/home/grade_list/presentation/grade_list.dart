@@ -151,7 +151,14 @@ class _GradeListWidgetState extends State<GradeListWidget> {
               FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}$')),
             ],
             onChanged: (text) {
-              final value = double.tryParse(text) ?? 0.0;
+              var value = double.tryParse(text) ?? 0.0;
+              if (value > 100) {
+                value = 100;
+                _controllers[index].text = '100';
+                _controllers[index].selection = TextSelection.fromPosition(
+                  TextPosition(offset: _controllers[index].text.length),
+                );
+              }
               widget.onChanged(index, value);
             },
             decoration: InputDecoration(

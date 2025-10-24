@@ -52,8 +52,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          GradeBloc(GradeList(), GradeRepository())..add(LoadGradesEvent()),
+      create: (context) => GradeBloc(GradeRepository())..add(LoadGradesEvent()),
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
@@ -218,7 +217,14 @@ class _HomePageState extends State<HomePage> {
                 FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}$')),
               ],
               onChanged: (text) {
-                final value = double.tryParse(text) ?? 0.0;
+                var value = double.tryParse(text) ?? 0.0;
+                if (value > 100) {
+                  value = 100;
+                  controller.text = '100';
+                  controller.selection = TextSelection.fromPosition(
+                    TextPosition(offset: controller.text.length),
+                  );
+                }
                 onChanged(value);
               },
               decoration: InputDecoration(

@@ -6,11 +6,11 @@ import 'package:homework_4_flutter/home/grade_list/presentation/grade_list_mappe
 import 'package:homework_4_flutter/home/grade_list/presentation/grade_state.dart';
 
 class GradeBloc extends Bloc<GradeEvent, GradeState> {
-  GradeList _gradeList;
+  late GradeList _gradeList;
 
   final GradeRepository repository;
 
-  GradeBloc(this._gradeList, this.repository) : super(InitialGradeState()) {
+  GradeBloc(this.repository) : super(InitialGradeState()) {
     on<LoadGradesEvent>((event, emit) async {
       _gradeList = await repository.load();
       emit(_createLoadedState());
