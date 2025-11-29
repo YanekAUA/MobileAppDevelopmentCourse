@@ -12,10 +12,14 @@ Future<void> init() async {
   di.registerLazySingleton(() => DioClient());
 
   // Data sources
-  di.registerLazySingleton<NewsRemoteDataSource>(() => NewsRemoteDataSource(di<DioClient>()));
+  di.registerLazySingleton<NewsRemoteDataSource>(
+    () => NewsRemoteDataSource(di<DioClient>()),
+  );
 
   // Repositories
-  di.registerLazySingleton<NewsRepository>(() => NewsRepositoryImpl(remoteDataSource: di<NewsRemoteDataSource>()));
+  di.registerLazySingleton<NewsRepository>(
+    () => NewsRepositoryImpl(remoteDataSource: di<NewsRemoteDataSource>()),
+  );
 
   // Usecases
   di.registerLazySingleton(() => GetTopHeadlines(di<NewsRepository>()));

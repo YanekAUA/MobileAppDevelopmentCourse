@@ -8,7 +8,14 @@ class NewsLoading extends NewsState {}
 
 class NewsLoaded extends NewsState {
   final List<Article> articles;
-  NewsLoaded(this.articles);
+  final bool hasReachedMax;
+  final bool isLoadingMore;
+
+  NewsLoaded(
+    this.articles, {
+    this.hasReachedMax = false,
+    this.isLoadingMore = false,
+  });
 }
 
 class NewsError extends NewsState {

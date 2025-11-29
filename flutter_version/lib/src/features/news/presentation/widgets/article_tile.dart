@@ -17,7 +17,14 @@ class ArticleTile extends StatelessWidget {
         subtitle: Text(article.description ?? ''),
         onTap: () {
           // For Part 1 we keep simple: show snackbar with title
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(article.title ?? '')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(article.title ?? ''),
+              duration: const Duration(milliseconds: 250),
+              clipBehavior: Clip.hardEdge,
+              showCloseIcon: true,
+            ),
+          );
         },
       ),
     );
