@@ -12,12 +12,10 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
   bool _hasReachedMax = false;
   bool _isFetchingMore = false;
   int _totalResults = 0;
-  String? _currentQuery;
 
   NewsBloc({required this.getTopHeadlines}) : super(NewsInitial()) {
     on<FetchTopHeadlines>(_onFetchTopHeadlines);
     on<LoadMoreHeadlines>(_onLoadMoreHeadlines);
-    on<SearchHeadlines>(_onSearchHeadlines);
   }
 
   Future<void> _onFetchTopHeadlines(
@@ -72,7 +70,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         final pageResult = await getTopHeadlines(
           country: 'us',
           category: event.category,
-          q: _currentQuery ?? event.q,
+          q: event.q,
           page: nextPage,
           pageSize: _pageSize,
         );
@@ -113,30 +111,3 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     }
   }
 }
-
-  Future<void> _onSearchHeadlines(
-    SearchHeadlines event,
-    Emitter<NewsState> emit,
-  ) async {
-    emit(NewsLoading());
-    _currentPage = 1;
-    _hasReachedMax = false;
-    _currentQuery = event.q;
-    AppLogger.logger.d('NewsBloc: SearchHeadlines fired, q: ${event.q}');
-    try {
-      final pageResult = await getTopHeadlines(
-        country: 'us',
-        q: _currentQuery,
-        page: _currentPage,
-        pageSize: _pageSize,
-      );
-      final articles = pageResult.articles;
-      _totalResults = pageResult.totalResults;
-      AppLogger.logger.d('NewsBloc: Search got ${articles.length} items (totalResults=$_totalResults)');
-      if (articles.length >= _totalResults) _hasReachedMax = true;
-      emit(NewsLoaded(articles, hasReachedMax: _hasReachedMax));
-    } catch (e) {
-      AppLogger.logger.e('NewsBloc: Error while searching headlines -> $e');
-      emit(NewsError(e.toString()));
-    }
-  }

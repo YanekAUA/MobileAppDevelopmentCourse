@@ -11,8 +11,3 @@ class LoadMoreHeadlines extends NewsEvent {
   final String? q;
   LoadMoreHeadlines({this.category, this.q});
 }
-
-class SearchHeadlines extends NewsEvent {
-  final String? q;
-  SearchHeadlines({this.q});
-}

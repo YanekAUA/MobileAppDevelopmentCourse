@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,11 @@ class NewsListPage extends StatefulWidget {
 
 class _NewsListPageState extends State<NewsListPage> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  Timer? _debounce;
+  bool _isSearching = false;
+  String? _currentQuery;
 
   @override
   void initState() {
@@ -28,14 +34,55 @@ class _NewsListPageState extends State<NewsListPage> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      context.read<NewsBloc>().add(LoadMoreHeadlines());
+      context.read<NewsBloc>().add(LoadMoreHeadlines(q: _currentQuery));
     }
+  }
+
+  void _onSearchChanged(String value) {
+    // Debounce user input to avoid firing too many requests
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      final q = value.trim().isEmpty ? null : value.trim();
+      _currentQuery = q;
+      context.read<NewsBloc>().add(FetchTopHeadlines(q: q));
+      // update UI — primarily suffix icon visibility
+      setState(() {});
+    });
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearching = !_isSearching;
+    });
+    if (_isSearching) {
+      // Focus on the input when we enter search mode
+      FocusScope.of(context).requestFocus(_searchFocusNode);
+    } else {
+      // Clear search when leaving search mode
+      if (_searchController.text.isNotEmpty) {
+        _searchController.clear();
+        _currentQuery = null;
+        context.read<NewsBloc>().add(FetchTopHeadlines());
+        setState(() {});
+      }
+    }
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    _currentQuery = null;
+    _debounce?.cancel();
+    context.read<NewsBloc>().add(FetchTopHeadlines());
+    setState(() {});
   }
 
   @override
@@ -96,7 +143,31 @@ class _NewsListPageState extends State<NewsListPage> {
       );
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Top Headlines')),
+      appBar: AppBar(
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                focusNode: _searchFocusNode,
+                textInputAction: TextInputAction.search,
+                decoration: const InputDecoration(
+                  hintText: 'Search headlines...',
+                  border: InputBorder.none,
+                ),
+                onChanged: _onSearchChanged,
+                onSubmitted: (v) {
+                  final q = v.trim().isEmpty ? null : v.trim();
+                  _currentQuery = q;
+                  context.read<NewsBloc>().add(FetchTopHeadlines(q: q));
+                },
+              )
+            : const Text('Top Headlines'),
+        actions: [
+          IconButton(
+            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            onPressed: _toggleSearch,
+          ),
+        ],
+      ),
       body: BlocBuilder<NewsBloc, NewsState>(
         builder: (context, state) {
           if (state is NewsLoading) {
@@ -104,11 +175,19 @@ class _NewsListPageState extends State<NewsListPage> {
           } else if (state is NewsLoaded) {
             final List<Article> articles = state.articles;
             if (articles.isEmpty) {
-              return Center(child: Text('No Results Found'));
+              return Center(
+                child: Text(
+                  _currentQuery == null
+                      ? 'No Results Found'
+                      : 'No results for "$_currentQuery"',
+                ),
+              );
             }
             return RefreshIndicator(
               onRefresh: () async {
-                context.read<NewsBloc>().add(FetchTopHeadlines());
+                context.read<NewsBloc>().add(
+                  FetchTopHeadlines(q: _currentQuery),
+                );
               },
               child: ListView.builder(
                 controller: _scrollController,
@@ -132,8 +211,9 @@ class _NewsListPageState extends State<NewsListPage> {
                   Text('Error: ${state.message}'),
                   const SizedBox(height: 12),
                   ElevatedButton(
-                    onPressed: () =>
-                        context.read<NewsBloc>().add(FetchTopHeadlines()),
+                    onPressed: () => context.read<NewsBloc>().add(
+                      FetchTopHeadlines(q: _currentQuery),
+                    ),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -145,7 +225,7 @@ class _NewsListPageState extends State<NewsListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.read<NewsBloc>().add(FetchTopHeadlines());
+          context.read<NewsBloc>().add(FetchTopHeadlines(q: _currentQuery));
         },
         child: const Icon(Icons.refresh),
       ),

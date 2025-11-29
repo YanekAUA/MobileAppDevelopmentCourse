@@ -10,9 +10,37 @@ class ArticleTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
-        leading: article.urlToImage != null
-            ? Image.network(article.urlToImage!, width: 72, fit: BoxFit.cover)
-            : const SizedBox(width: 72, child: Icon(Icons.image)),
+        leading: SizedBox(
+          width: 72,
+          height: 72,
+          child: article.urlToImage != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    article.urlToImage!,
+                    width: 72,
+                    height: 72,
+                    fit: BoxFit.cover,
+                    // Show a small placeholder while loading and a fallback when error occurs
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Center(
+                        child: Icon(Icons.broken_image, size: 32),
+                      );
+                    },
+                  ),
+                )
+              : const Center(child: Icon(Icons.image)),
+        ),
         title: Text(article.title ?? 'No title'),
         subtitle: Text(article.description ?? ''),
         onTap: () {
