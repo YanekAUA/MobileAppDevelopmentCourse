@@ -23,6 +23,9 @@ class NewsRemoteDataSource {
     if (q != null && q.isNotEmpty) params['q'] = q;
 
     try {
+      AppLogger.logger.d(
+        'NewsRemoteDataSource.getTopHeadlines params: $params',
+      );
       final response = await dio.get('/top-headlines', queryParameters: params);
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;

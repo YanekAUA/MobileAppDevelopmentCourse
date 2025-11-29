@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/article.dart';
+import '../pages/news_detail_page.dart';
 
 class ArticleTile extends StatelessWidget {
   final Article article;
@@ -44,14 +45,8 @@ class ArticleTile extends StatelessWidget {
         title: Text(article.title ?? 'No title'),
         subtitle: Text(article.description ?? ''),
         onTap: () {
-          // For Part 1 we keep simple: show snackbar with title
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(article.title ?? ''),
-              duration: const Duration(milliseconds: 250),
-              clipBehavior: Clip.hardEdge,
-              showCloseIcon: true,
-            ),
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => NewsDetailPage(article: article)),
           );
         },
       ),
