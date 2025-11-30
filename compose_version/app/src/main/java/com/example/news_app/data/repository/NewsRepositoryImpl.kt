@@ -25,6 +25,7 @@ class NewsRepositoryImpl(private val service: NewsApiService): NewsRepository {
                 url = dto.url,
                 urlToImage = dto.urlToImage,
                 publishedAt = publishedAt,
+                content = dto.content,
             )
         }
         return ArticlesPage(articles = articles, totalResults = resp.totalResults)

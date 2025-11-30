@@ -16,6 +16,7 @@ data class ArticleDto(
     @SerializedName("url") val url: String? = null,
     @SerializedName("urlToImage") val urlToImage: String? = null,
     @SerializedName("publishedAt") val publishedAt: String? = null,
+    @SerializedName("content") val content: String? = null,
 )
 
 data class SourceDto(

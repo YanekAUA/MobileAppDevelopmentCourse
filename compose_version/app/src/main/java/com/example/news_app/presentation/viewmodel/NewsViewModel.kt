@@ -19,9 +19,11 @@ class NewsViewModel(private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase) 
     private var _isFetchingMore = false
     private var _totalResults = 0
     private var _currentQuery: String? = null
+    private var _currentCategory: String? = null
 
-    fun fetchTopHeadlines(q: String? = null) {
+    fun fetchTopHeadlines(q: String? = null, category: String? = null) {
         _currentQuery = q
+        _currentCategory = category
         viewModelScope.launch {
             _state.value = NewsState.Loading
             _currentPage = 1
@@ -29,7 +31,7 @@ class NewsViewModel(private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase) 
             try {
                 val pageResult = getTopHeadlinesUseCase.execute(
                     country = "us",
-                    category = null,
+                    category = _currentCategory,
                     q = _currentQuery,
                     page = _currentPage,
                     pageSize = _pageSize,
@@ -55,7 +57,7 @@ class NewsViewModel(private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase) 
                     val nextPage = _currentPage + 1
                     val pageResult = getTopHeadlinesUseCase.execute(
                         country = "us",
-                        category = null,
+                        category = _currentCategory,
                         q = _currentQuery,
                         page = nextPage,
                         pageSize = _pageSize,
@@ -77,5 +79,13 @@ class NewsViewModel(private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase) 
                 _isFetchingMore = false
             }
         }
+    }
+
+    // Helper to retrieve article by index when showing details
+    fun getArticleAt(index: Int): Article? {
+        val current = _state.value
+        return if (current is NewsState.Loaded) {
+            current.articles.getOrNull(index)
+        } else null
     }
 }
